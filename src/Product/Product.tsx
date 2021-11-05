@@ -4,8 +4,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 
 const Product = (props: any) => {
-  const { product, number, setCartProducts, sendTotalAddedProductToApp } =
-    props;
+  const { product, addToCart } = props;
   const [counter, setCounter] = useState(0);
 
   const handleIncrement = () => {
@@ -14,16 +13,6 @@ const Product = (props: any) => {
 
   const handleDecrement = () => {
     setCounter(counter - 1);
-  };
-
-  const addedProducts = { ...product, quantity: counter };
-  const addToCart = () => {
-    setCartProducts(addedProducts);
-  };
-
-  const totalCart = () => {
-    addToCart();
-    sendTotalAddedProductToApp(addedProducts);
   };
 
   return (
@@ -52,7 +41,7 @@ const Product = (props: any) => {
             </ButtonGroup>
           </div>
           <br />
-          <Button variant="contained" onClick={totalCart}>
+          <Button variant="contained" onClick={() => addToCart(product)}>
             Add to cart
           </Button>
         </div>

@@ -6,15 +6,15 @@ import Product from "./Product/Product";
 import Badge from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-const App = () => {
-  interface Provider {
-    id: number;
-    image: string;
-    title: string;
-    amount: number;
-    quantity: number;
-  }
+export type CartProductsType = {
+  id: number;
+  image: string;
+  title: string;
+  amount: number;
+  quantity: number;
+};
 
+const App = () => {
   const products = [
     {
       id: 1,
@@ -97,28 +97,34 @@ const App = () => {
     },
   };
 
-  const [cartProducts, setCartProducts] = useState<Provider>({
-    id: 0,
-    image: "",
-    title: "",
-    amount: 0,
-    quantity: 0,
-  });
-  const [total, setTotal] = useState({});
+  const [cartProducts, setCartProducts] = useState([] as CartProductsType[]);
 
-  const sendTotalAddedProductToApp = (index: any) => {
-    setTotal(index);
+  const addToCart = (addedProduct: CartProductsType) => {
+    setCartProducts((prev) => {
+      const checkproductInCart = prev.find(
+        (prod) => prod.id === addedProduct.id
+      );
+
+      if (checkproductInCart) {
+        return prev.map((prod) =>
+          prod.id === addedProduct.id
+            ? { ...prod, amount: prod.amount + 1 }
+            : prod
+        );
+      }
+      return [...prev, { ...addedProduct, amount: 1 }];
+    });
   };
-  let number: Array<object>;
-  number = [{ id: 0, title: "", amount: 0, quantity: 0 }];
-  number.push([total]);
-  console.log(number);
+  console.log(cartProducts);
+
+  const getTotalProducts = (products: CartProductsType[]) =>
+    products.reduce((tot: number, product) => tot + product.amount, 0);
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="cart">
-          <Badge badgeContent={number.length} color="primary">
+          <Badge badgeContent={getTotalProducts(cartProducts)} color="primary">
             <ShoppingCartIcon />
           </Badge>
         </div>
@@ -128,10 +134,7 @@ const App = () => {
               <Product
                 key={product.id}
                 product={product}
-                number={number}
-                cartProducts={cartProducts}
-                setCartProducts={setCartProducts}
-                sendTotalAddedProductToApp={sendTotalAddedProductToApp}
+                addToCart={addToCart}
               />
             </div>
           ))}
